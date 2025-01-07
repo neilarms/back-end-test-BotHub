@@ -29,5 +29,5 @@
     "prisma/**/*",
     "scripts/**/*",
     "db/**/*"
-  ],
+, "config"  ],
 }
