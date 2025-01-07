@@ -1,3 +1,3 @@
 run:
-	docker compose up -d --force-recreate db_dev
+	docker-compose up --build -d
 	yarn start:dev

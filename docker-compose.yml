@@ -1,11 +1,29 @@
 version: '3.8'
 services:
   db_dev:
+    container_name: '${SERVICE_NAME}-db'
     image: postgres:13
     restart: always
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     ports:
-      - 127.0.0.1:5432:5432
+      - '${DATABASE_PORT_EXTERNAL}:${DATABASE_PORT_INTERNAL}'
     env_file:
       - .env
     volumes:
-      - ./pg_data:/var/lib/postgresql/data/pgdata
+      - postgres_data:/var/lib/postgresql/data # Хранение данных Postgres
+      #- ./pg_data:/var/lib/postgresql/data/pgdata
+
+  adminer:
+    container_name: '${SERVICE_NAME}-adminer'
+    image: adminer
+    restart: always
+    depends_on:
+      - db_dev
+    ports:
+      - '${ADMINER_PORT_EXTERNAL}:${ADMINER_PORT_INTERNAL}'
+
+volumes:
+  postgres_data:

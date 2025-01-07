@@ -1,16 +1,16 @@
-import path from 'path'
-import fs from 'fs'
-import YAML from 'yaml'
 import { z } from 'zod';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const configSchema = z.object({
   http: z.object({
     host: z.string(),
-    port: z.number()
+    port: z.preprocess((val) => Number(val), z.number())
   }),
   postgres: z.object({
     host: z.string(),
-    port: z.number(),
+    port: z.preprocess((val) => Number(val), z.number()),
     user: z.string(),
     password: z.string(),
     db: z.string()
@@ -21,19 +21,30 @@ const configSchema = z.object({
   example: z.object({
     message: z.string()
   })
-})
+});
 
 export type Config = z.infer<typeof configSchema>;
 
-const defaultConfigPath = 'config/config.yml'
-
 const parseConfig = (): Config => {
-  const configAbsPath = path.resolve(process.cwd(), defaultConfigPath)
-
-  const file = fs.readFileSync(configAbsPath, 'utf-8')
-
-  const config: Config = YAML.parse(file)
-
+  const config = {
+    http: {
+      host: process.env.HTTP_HOST,
+      port: process.env.HTTP_PORT
+    },
+    postgres: {
+      host: process.env.DATABASE_HOST,
+      port: process.env.DATABASE_PORT_INTERNAL,
+      user: process.env.DATABASE_USER,
+      password: process.env.DATABASE_PASSWORD,
+      db: process.env.DATABASE_NAME
+    },
+    jwt: {
+      secret: process.env.JWT_SECRET
+    },
+    example: {
+      message: process.env.EXAMPLE_MESSAGE
+    }
+  };
 
   const result = configSchema.safeParse(config);
 
@@ -42,8 +53,8 @@ const parseConfig = (): Config => {
   }
 
   return result.data;
-}
+};
 
-export const config = parseConfig()
+export const config = parseConfig();
 
 export const devMode = process.env.NODE_ENV === 'development';
