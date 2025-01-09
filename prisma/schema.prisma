@@ -10,7 +10,53 @@ datasource db {
 model User {
   id                              String                @id @default(uuid())
   email                           String?               @unique
-  password                        String?
+  nickname                        String?               @unique
+  password                        String
   avatar                          String?
+  name                            String?
+  surname                         String?
+  role                            Role                  @default(USER)
   created_at                      DateTime              @default(now())
+  updated_at                      DateTime              @updatedAt
+  feedbackPosts                   FeedbackPost[]
+
+  @@map("users")
+}
+
+model FeedbackPost {
+  id                              String                @id @default(uuid())
+  title                           String
+  description                     String
+  categoryId                      String
+  category                        CategoriesFeedbackPost @relation(fields: [categoryId], references: [id])
+  status                          Status                @default(NEW)
+  rating                          Int
+  authorId                        String
+  author                          User                  @relation(fields: [authorId], references: [id])
+  created_at                      DateTime              @default(now())
+  updated_at                      DateTime              @updatedAt
+
+  @@map("feedbackPosts")
+}
+
+model CategoriesFeedbackPost {
+  id                              String                @id @default(uuid())
+  title                           String
+  ru_title                        String
+  feedbackPosts                   FeedbackPost[]
+  created_at                      DateTime              @default(now())
+
+  @@map("categoriesFeedbackPosts")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Status {
+  NEW
+  IN_PROGRESS
+  PUBLISHED
+  REJECTED
 }
