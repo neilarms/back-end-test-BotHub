@@ -14,16 +14,14 @@ export const buildCheckCredentials = ({userRepository}: Adapter): CheckCredentia
         email: {
           mode: 'insensitive',
           equals: email
-        },
-        password: {
-          not: null
         }
       },
       select: {
         id: true,
         email: true,
         avatar: true,
-        created_at: true
+        created_at: true,
+        password: true
       }
     }) 
 

@@ -29,7 +29,12 @@ export const buildRefresh = ({service, adapter }: UseCaseParams): Refresh=>{
       select: {
         id: true,
         email: true,
+        nickname: true,
         avatar: true,
+        name: true,
+        surname: true,
+        role: true,
+        feedbackPosts: true,
         created_at: true
       }
     })
